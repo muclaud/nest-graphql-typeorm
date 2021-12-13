@@ -1,0 +1,36 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+"""user"""
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  description: String
+  creationDate: Date!
+}
+
+"""Date custom scalar type"""
+scalar Date
+
+type Query {
+  getUserById(id: Float!): User!
+  getUserByEmail(email: String!): User!
+  users: [User!]!
+}
+
+type Mutation {
+  addUser(newUserData: CreateUserInput!): User!
+  removeUser(id: Float!): Boolean!
+}
+
+input CreateUserInput {
+  name: String!
+  email: String!
+  description: String
+}
+
+type Subscription {
+  userAdded: User!
+}
