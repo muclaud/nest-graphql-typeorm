@@ -10,10 +10,18 @@ export class User {
 
   @Field()
   @Column()
-  name: string;
+  firstName: string;
 
   @Field()
   @Column()
+  lastName: string;
+
+  @Field()
+  @Column()
+  password: string;
+
+  @Field()
+  @Column({ unique: true })
   email: string;
 
   @Field({ nullable: true })
