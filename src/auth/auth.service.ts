@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { User } from '../users/entities/user.entity';
 import { RegistrationInput } from './dto/registration.input';
@@ -19,15 +19,9 @@ export class AuthService {
       return createdUser;
     } catch (error) {
       if (error?.code === 23505) {
-        throw new HttpException(
-          'User with that email already exists',
-          HttpStatus.BAD_REQUEST,
-        );
+        throw new BadRequestException('User with that email already exists');
       }
-      throw new HttpException(
-        'Something went wrong',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new BadRequestException('Something went wrong');
     }
   }
 
@@ -38,10 +32,7 @@ export class AuthService {
       // user.password = undefined;
       return user;
     } catch (error) {
-      throw new HttpException(
-        'Wrong credentials provided',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new BadRequestException('Wrong credentials provided');
     }
   }
 
@@ -54,10 +45,7 @@ export class AuthService {
       hashedPassword,
     );
     if (!isPasswordMatching) {
-      throw new HttpException(
-        'Wrong credentials provided',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new BadRequestException('Wrong credentials provided');
     }
   }
 }
