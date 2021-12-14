@@ -1,5 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Exclude } from 'class-transformer';
 
 @Entity('User')
 @ObjectType({ description: 'user' })
@@ -8,15 +9,12 @@ export class User {
   @Field((type) => ID)
   id: number;
 
-  @Field()
   @Column()
   firstName: string;
 
-  @Field()
   @Column()
   lastName: string;
 
-  @Field()
   @Column()
   password: string;
 
@@ -24,11 +22,15 @@ export class User {
   @Column({ unique: true })
   email: string;
 
-  @Field({ nullable: true })
-  @Column()
+  @Column({ nullable: true })
   description?: string;
 
-  @Field()
   @Column()
   creationDate: Date;
+
+  @Column({
+    nullable: true,
+  })
+  @Exclude()
+  public currentHashedRefreshToken?: string;
 }

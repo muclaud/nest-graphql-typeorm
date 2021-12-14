@@ -1,8 +1,9 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { RegistrationInput } from '../auth/dto/registration.input';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -24,10 +25,7 @@ export class UsersService {
     if (user) {
       return user;
     }
-    throw new HttpException(
-      'User with this id does not exist',
-      HttpStatus.NOT_FOUND,
-    );
+    throw new BadRequestException('User with this id does not exist');
   }
 
   async getByEmail(email: string): Promise<User> {
@@ -35,10 +33,7 @@ export class UsersService {
     if (user) {
       return user;
     }
-    throw new HttpException(
-      'User with this email does not exist',
-      HttpStatus.NOT_FOUND,
-    );
+    throw new BadRequestException('User with this email does not exist');
   }
 
   async getAllUsers(): Promise<User[]> {
@@ -49,12 +44,35 @@ export class UsersService {
   async remove(id: number): Promise<boolean> {
     const user = await this.userRepository.findOne({ id });
     if (!user) {
-      throw new HttpException(
-        'User with this id does not exist',
-        HttpStatus.NOT_FOUND,
-      );
+      throw new BadRequestException('User with this id does not exist');
     }
     await this.userRepository.delete({ id });
     return true;
+  }
+
+  async setCurrentRefreshToken(refreshToken: string, userId: number) {
+    const currentHashedRefreshToken = await bcrypt.hash(refreshToken, 10);
+    await this.userRepository.update(userId, {
+      currentHashedRefreshToken,
+    });
+  }
+
+  async getUserIfRefreshTokenMatches(refreshToken: string, userId: number) {
+    const user = await this.getById(userId);
+
+    const isRefreshTokenMatching = await bcrypt.compare(
+      refreshToken,
+      user.currentHashedRefreshToken,
+    );
+
+    if (isRefreshTokenMatching) {
+      return user;
+    }
+  }
+
+  async removeRefreshToken(userId: number) {
+    return this.userRepository.update(userId, {
+      currentHashedRefreshToken: null,
+    });
   }
 }
