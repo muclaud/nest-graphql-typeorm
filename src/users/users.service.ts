@@ -1,6 +1,6 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
-import { CreateUserInput } from './dto/create-user.input';
-import { User } from './models/user.model';
+import { RegistrationInput } from '../auth/dto/registration.input';
+import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -10,10 +10,10 @@ export class UsersService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
   ) {}
-  async create(data: CreateUserInput): Promise<User> {
+  async create(data: RegistrationInput): Promise<User> {
     const newUser = await this.userRepository.create({
-      creationDate: new Date(),
       ...data,
+      creationDate: new Date(),
     });
     await this.userRepository.save(newUser);
     return newUser;

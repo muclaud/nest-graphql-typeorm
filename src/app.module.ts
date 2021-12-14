@@ -3,6 +3,7 @@ import { UsersModule } from './users/users.module';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './database/database.module';
+import { AuthModule } from './auth/auth.module';
 
 import * as Joi from 'joi';
 
@@ -27,6 +28,7 @@ import * as Joi from 'joi';
     }),
     UsersModule,
     DatabaseModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],

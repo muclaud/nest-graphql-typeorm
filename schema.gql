@@ -5,7 +5,9 @@
 """user"""
 type User {
   id: ID!
-  name: String!
+  firstName: String!
+  lastName: String!
+  password: String!
   email: String!
   description: String
   creationDate: Date!
@@ -21,14 +23,18 @@ type Query {
 }
 
 type Mutation {
-  addUser(newUserData: CreateUserInput!): User!
+  addUser(newUserData: RegistrationInput!): User!
   removeUser(id: Float!): Boolean!
+  login: User!
+  register(registerInput: RegistrationInput!): User!
 }
 
-input CreateUserInput {
-  name: String!
+input RegistrationInput {
+  firstName: String!
+  lastName: String!
   email: String!
   description: String
+  password: String!
 }
 
 type Subscription {
