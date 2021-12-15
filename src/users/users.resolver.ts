@@ -20,15 +20,15 @@ export class UsersResolver {
 
   @ResolveField(() => Account)
   account(@Parent() user: User) {
-    return this.userService.findUser(user.userId);
+    return this.userService.findUser(user.accountId);
   }
 
-  @Query(() => [User], { name: 'user' })
+  @Query(() => [User], { name: 'users' })
   list() {
     return this.userService.list();
   }
 
-  @Query(() => User, { name: 'Account' })
+  @Query(() => User, { name: 'account' })
   findById(@Args('id', { type: () => ID }) id: string) {
     return this.userService.findById(id);
   }
@@ -44,7 +44,7 @@ export class UsersResolver {
   }
 
   @Mutation(() => User)
-  removePUser(@Args('id', { type: () => ID }, ParseUUIDPipe) id: string) {
+  removeUser(@Args('id', { type: () => ID }, ParseUUIDPipe) id: string) {
     return this.userService.remove(id);
   }
 }

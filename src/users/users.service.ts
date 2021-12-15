@@ -13,8 +13,8 @@ export class UsersService {
     @InjectRepository(Account) private accountRepo: Repository<Account>,
   ) {}
 
-  findUser(userId: string) {
-    return this.accountRepo.findOne(userId);
+  findUser(accountId: string) {
+    return this.accountRepo.findOne(accountId);
   }
 
   list() {
