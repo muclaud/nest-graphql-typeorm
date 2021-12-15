@@ -18,5 +18,5 @@ export class LogInput {
   @IsNotEmpty()
   @MinLength(4)
   @MaxLength(20)
-  plainTextPassword: string;
+  password: string;
 }

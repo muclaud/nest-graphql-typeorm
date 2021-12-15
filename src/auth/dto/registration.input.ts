@@ -1,7 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 import {
-  IsOptional,
-  Length,
+  IsDateString,
   MaxLength,
   IsEmail,
   IsString,
@@ -34,8 +33,7 @@ export class RegistrationInput {
   @MaxLength(20)
   password: string;
 
-  @Field({ nullable: true })
-  @IsOptional()
-  @Length(30, 255)
-  description?: string;
+  @Field(() => String)
+  @IsDateString()
+  birthDate: string;
 }
