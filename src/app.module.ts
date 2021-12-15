@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { UsersModule } from './users/users.module';
 import { GraphQLModule } from '@nestjs/graphql';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DatabaseModule } from './database/database.module';
 import { AuthModule } from './auth/auth.module';
-// import { PostsModule } from './posts/posts.module';
-
+import { MailerModule } from '@nestjs-modules/mailer';
+import { mailerConfigFactory } from './email/mailerConfigFactory';
 import * as Joi from 'joi';
 
 @Module({
@@ -17,10 +17,12 @@ import * as Joi from 'joi';
         POSTGRES_USER: Joi.string().required(),
         POSTGRES_PASSWORD: Joi.string().required(),
         POSTGRES_DB: Joi.string().required(),
-        JWT_ACCESS_TOKEN_SECRET: Joi.string().required(),
-        JWT_ACCESS_TOKEN_EXPIRATION_TIME: Joi.string().required(),
-        JWT_REFRESH_TOKEN_SECRET: Joi.string().required(),
-        JWT_REFRESH_TOKEN_EXPIRATION_TIME: Joi.string().required(),
+        JWT_SECRET: Joi.string().required(),
+        EMAIL_SERVER_HOST: Joi.string().required(),
+        EMAIL_SERVER_PORT: Joi.string().required(),
+        EMAIL_SERVER_USER: Joi.string().required(),
+        EMAIL_SERVER_PASSWORD: Joi.string().required(),
+        EMAIL_FROM: Joi.string().required(),
       }),
     }),
     GraphQLModule.forRoot({
@@ -30,10 +32,14 @@ import * as Joi from 'joi';
         dateScalarMode: 'timestamp',
       },
     }),
+    MailerModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: mailerConfigFactory,
+      inject: [ConfigService],
+    }),
     UsersModule,
     DatabaseModule,
     AuthModule,
-    // PostsModule,
   ],
   controllers: [],
   providers: [],
