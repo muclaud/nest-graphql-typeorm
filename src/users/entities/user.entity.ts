@@ -36,11 +36,11 @@ export class User extends EntityBase {
   mobile: string;
 
   @Field(() => String, { nullable: true })
-  @Column({ name: 'user_id', nullable: true })
+  @Column({ name: 'account_id', nullable: true })
   accountId: string;
 
   @Field(() => Account, { nullable: true })
   @OneToOne(() => Account, (account) => account.user)
-  @JoinColumn({ name: 'user_id' })
+  @JoinColumn({ name: 'account_id' })
   account: Account;
 }

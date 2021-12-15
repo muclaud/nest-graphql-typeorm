@@ -4,6 +4,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DatabaseModule } from './database/database.module';
 import { AuthModule } from './auth/auth.module';
+import { PostsModule } from './posts/posts.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { mailerConfigFactory } from './email/mailerConfigFactory';
 import * as Joi from 'joi';
@@ -43,6 +44,7 @@ import * as Joi from 'joi';
     UsersModule,
     DatabaseModule,
     AuthModule,
+    PostsModule,
   ],
   controllers: [],
   providers: [],

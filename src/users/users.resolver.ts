@@ -28,7 +28,7 @@ export class UsersResolver {
     return this.userService.list();
   }
 
-  @Query(() => User, { name: 'account' })
+  @Query(() => User, { name: 'user' })
   findById(@Args('id', { type: () => ID }) id: string) {
     return this.userService.findById(id);
   }
