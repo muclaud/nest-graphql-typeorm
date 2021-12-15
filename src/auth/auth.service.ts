@@ -238,7 +238,7 @@ export class AuthService {
     return deletedUser;
   }
 
-  findUser(userId: string) {
-    return this.userRepo.findOne({ userId });
+  findUser(accountId: string) {
+    return this.userRepo.findOne({ accountId });
   }
 }

@@ -4,8 +4,8 @@
 
 type User {
   id: ID!
-  createdAt: Timestamp!
-  updatedAt: Timestamp!
+  createdAt: DateTime!
+  updatedAt: DateTime!
   createdBy: String!
   updatedBy: String
   isDeleted: Boolean!
@@ -16,19 +16,19 @@ type User {
   city: String
   country: String
   mobile: String
-  userId: String
+  accountId: String
   account: Account
 }
 
 """
-`Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
-scalar Timestamp
+scalar DateTime
 
 type Account {
   id: ID!
-  createdAt: Timestamp!
-  updatedAt: Timestamp!
+  createdAt: DateTime!
+  updatedAt: DateTime!
   createdBy: String!
   updatedBy: String
   isDeleted: Boolean!
@@ -41,15 +41,15 @@ type Account {
 }
 
 type Query {
-  user: [User!]!
-  Account(id: ID!): User!
+  users: [User!]!
+  account(id: ID!): User!
   currentAccount: Account!
 }
 
 type Mutation {
   createUser(createUserInput: CreateUserInput!): User!
   updateUser(updateUserInput: UpdateUserInput!): User!
-  removePUser(id: ID!): User!
+  removeUser(id: ID!): User!
   registration(registrationInput: RegistrationInput!): String!
   activate(activateInput: ActivateInput!): Account!
   login(loginInput: LogInput!): Account!

@@ -28,9 +28,12 @@ import * as Joi from 'joi';
     GraphQLModule.forRoot({
       installSubscriptionHandlers: true,
       autoSchemaFile: 'schema.gql',
-      buildSchemaOptions: {
-        dateScalarMode: 'timestamp',
+      context: ({ req, res }) => ({ req, res }),
+      cors: {
+        credentials: true,
+        origin: true,
       },
+      playground: true,
     }),
     MailerModule.forRootAsync({
       imports: [ConfigModule],

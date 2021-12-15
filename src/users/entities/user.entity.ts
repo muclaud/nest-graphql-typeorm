@@ -37,7 +37,7 @@ export class User extends EntityBase {
 
   @Field(() => String, { nullable: true })
   @Column({ name: 'user_id', nullable: true })
-  userId: string;
+  accountId: string;
 
   @Field(() => Account, { nullable: true })
   @OneToOne(() => Account, (account) => account.user)
