@@ -1,55 +1,50 @@
-import { Args, Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  ID,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql';
+import { ParseUUIDPipe } from '@nestjs/common';
 import { UsersService } from './users.service';
+import { Account } from '../auth/entities/auth.entity';
 import { User } from './entities/user.entity';
-import { NotFoundException } from '@nestjs/common';
-import { PubSub } from 'graphql-subscriptions';
-import { RegistrationInput } from '../auth/dto/registration.input';
+import { CreateUserInput } from './dto/create-user.input';
+import { UpdateUserInput } from './dto/update-user.input';
 
-const pubSub = new PubSub();
-
-@Resolver((of) => User)
+@Resolver(() => User)
 export class UsersResolver {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly userService: UsersService) {}
 
-  @Query((returns) => User)
-  async getUserById(@Args('id') id: number): Promise<User> {
-    const user = await this.usersService.getById(id);
-    if (!user) {
-      throw new NotFoundException(id);
-    }
-    return user;
+  @ResolveField(() => Account)
+  account(@Parent() user: User) {
+    return this.userService.findUser(user.userId);
   }
 
-  @Query((returns) => User)
-  async getUserByEmail(@Args('email') email: string): Promise<User> {
-    const user = await this.usersService.getByEmail(email);
-    if (!user) {
-      throw new NotFoundException(email);
-    }
-    return user;
+  @Query(() => [User], { name: 'user' })
+  list() {
+    return this.userService.list();
   }
 
-  @Query((returns) => [User])
-  async users(): Promise<User[]> {
-    return await this.usersService.getAllUsers();
+  @Query(() => User, { name: 'Account' })
+  findById(@Args('id', { type: () => ID }) id: string) {
+    return this.userService.findById(id);
   }
 
-  @Mutation((returns) => User)
-  async addUser(
-    @Args('newUserData') newUserData: RegistrationInput,
-  ): Promise<User> {
-    const user = await this.usersService.create(newUserData);
-    pubSub.publish('userAdded', { userAdded: user });
-    return user;
+  @Mutation(() => User)
+  createUser(@Args('createUserInput') createUserInput: CreateUserInput) {
+    return this.userService.create(createUserInput);
   }
 
-  @Mutation((returns) => Boolean)
-  async removeUser(@Args('id') id: number) {
-    return this.usersService.remove(id);
+  @Mutation(() => User)
+  updateUser(@Args('updateUserInput') updateUserInput: UpdateUserInput) {
+    return this.userService.update(updateUserInput.id, updateUserInput);
   }
 
-  @Subscription((returns) => User)
-  userAdded() {
-    return pubSub.asyncIterator('userAdded');
+  @Mutation(() => User)
+  removePUser(@Args('id', { type: () => ID }, ParseUUIDPipe) id: string) {
+    return this.userService.remove(id);
   }
 }

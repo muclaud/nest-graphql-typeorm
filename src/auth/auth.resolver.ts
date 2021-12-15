@@ -1,67 +1,71 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import {
+  Args,
+  Context,
+  Mutation,
+  Parent,
+  Query,
+  Resolver,
+  ResolveField,
+  ID,
+} from '@nestjs/graphql';
+import { ParseUUIDPipe } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { Authorize } from './guards/auth.guard';
+import { CurrentAccount } from './helpers/current-account.decorator';
+
+import { Account } from './entities/auth.entity';
 import { User } from '../users/entities/user.entity';
+
 import { RegistrationInput } from './dto/registration.input';
-import { UseGuards, Req } from '@nestjs/common';
-import { UsersService } from 'src/users/users.service';
-import LocalAuthGuard from './guards/localAuth.guard';
-import RequestWithUser from './common/requestWithUser.interface';
-import JwtAuthGuard from './guards/jwtAuth.guard';
-import JwtRefreshGuard from './guards/jwt-refresh.guard';
+import { ActivateInput } from './dto/activate.input';
+import { LogInput } from './dto/login.input';
 
-@Resolver(() => User)
+@Resolver(() => Account)
 export class AuthResolver {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly usersService: UsersService,
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
-  @Mutation((returns) => User)
-  @UseGuards(LocalAuthGuard)
-  async login(@Req() request: RequestWithUser) {
-    const { user } = request;
-    const accessTokenCookie = this.authService.getCookieWithJwtAccessToken(
-      user.id,
-    );
-    const { cookie: refreshTokenCookie, token: refreshToken } =
-      this.authService.getCookieWithJwtRefreshToken(user.id);
-
-    await this.usersService.setCurrentRefreshToken(refreshToken, user.id);
-
-    request.res.setHeader('Set-Cookie', [
-      accessTokenCookie,
-      refreshTokenCookie,
-    ]);
-
-    return user;
+  @ResolveField(() => User)
+  user(@Parent() account: Account) {
+    return this.authService.findUser(account.id);
   }
 
-  @Mutation((returns) => Boolean)
-  @UseGuards(LocalAuthGuard)
-  async logout(@Req() request: RequestWithUser) {
-    await this.usersService.removeRefreshToken(request.user.id);
-    request.res.setHeader('Set-Cookie', this.authService.getCookieForLogOut());
+  @Mutation(() => String)
+  registration(
+    @Args('registrationInput') registrationInput: RegistrationInput,
+  ) {
+    return this.authService.signup(registrationInput);
   }
 
-  @Mutation((returns) => User)
-  async register(@Args('registerInput') RegistrationInput: RegistrationInput) {
-    return this.authService.register(RegistrationInput);
+  @Mutation(() => Account)
+  activate(@Args('activateInput') input: ActivateInput, @Context() { res }) {
+    return this.authService.activate(input, res);
   }
 
-  @Query((returns) => User)
-  @UseGuards(JwtAuthGuard)
-  authenticate(@Req() request: RequestWithUser) {
-    return request.user;
+  @Mutation(() => Account)
+  login(@Args('loginInput') logInput: LogInput, @Context() { res }) {
+    return this.authService.signin(logInput, res);
   }
 
-  @Query((returns) => User)
-  @UseGuards(JwtRefreshGuard)
-  refresh(@Req() request: RequestWithUser) {
-    const accessTokenCookie = this.authService.getCookieWithJwtAccessToken(
-      request.user.id,
-    );
+  @Mutation(() => Account)
+  refresh(@Context() { req, res }) {
+    return this.authService.refresh(req, res);
+  }
 
-    request.res.setHeader('Set-Cookie', accessTokenCookie);
-    return request.user;
+  @Authorize()
+  @Mutation(() => String)
+  signout(@Context() { res }) {
+    return this.authService.signout(res);
+  }
+
+  @Authorize()
+  @Query(() => Account)
+  currentAccount(@CurrentAccount() account: Account) {
+    return this.authService.currentAccount(account);
+  }
+
+  @Authorize()
+  @Mutation(() => Account)
+  removeAccount(@Args('id', { type: () => ID }, ParseUUIDPipe) id: string) {
+    return this.authService.removeAccount(id);
   }
 }

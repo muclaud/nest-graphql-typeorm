@@ -2,66 +2,97 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-"""user"""
 type User {
   id: ID!
-  email: String!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+  createdBy: String!
+  updatedBy: String
+  isDeleted: Boolean!
   firstName: String!
   lastName: String!
-  password: String!
-  description: String
-  creationDate: Date!
-  currentHashedRefreshToken: String
+  birthDate: String!
+  address: String
+  city: String
+  country: String
+  mobile: String
+  userId: String
+  account: Account
 }
 
-"""Date custom scalar type"""
-scalar Date
+"""
+`Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
+"""
+scalar Timestamp
 
-type Post {
-  """Example field (placeholder)"""
-  exampleField: Int!
+type Account {
+  id: ID!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+  createdBy: String!
+  updatedBy: String
+  isDeleted: Boolean!
+  email: String!
+  role: String!
+  status: String!
+  user: User
+  password: String!
+  verificationCode: String
 }
 
 type Query {
-  getUserById(id: Float!): User!
-  getUserByEmail(email: String!): User!
-  users: [User!]!
-  authenticate: User!
-  refresh: User!
-  posts: [Post!]!
-  post(id: Int!): Post!
+  user: [User!]!
+  Account(id: ID!): User!
+  currentAccount: Account!
 }
 
 type Mutation {
-  addUser(newUserData: RegistrationInput!): User!
-  removeUser(id: Float!): Boolean!
-  login: User!
-  logout: Boolean!
-  register(registerInput: RegistrationInput!): User!
-  createPost(createPostInput: CreatePostInput!): Post!
-  updatePost(updatePostInput: UpdatePostInput!): Post!
-  removePost(id: Int!): Post!
+  createUser(createUserInput: CreateUserInput!): User!
+  updateUser(updateUserInput: UpdateUserInput!): User!
+  removePUser(id: ID!): User!
+  registration(registrationInput: RegistrationInput!): String!
+  activate(activateInput: ActivateInput!): Account!
+  login(loginInput: LogInput!): Account!
+  refresh: Account!
+  signout: String!
+  removeAccount(id: ID!): Account!
+}
+
+input CreateUserInput {
+  firstName: String!
+  lastName: String!
+  birthDate: String!
+  address: String
+  city: String
+  country: String
+  mobile: String
+}
+
+input UpdateUserInput {
+  firstName: String
+  lastName: String
+  birthDate: String
+  address: String
+  city: String
+  country: String
+  mobile: String
+  id: ID!
 }
 
 input RegistrationInput {
   firstName: String!
   lastName: String!
   email: String!
-  description: String
+  birthDate: String!
   password: String!
 }
 
-input CreatePostInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+input ActivateInput {
+  email: String!
+  verificationCode: String!
 }
 
-input UpdatePostInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
-}
-
-type Subscription {
-  userAdded: User!
+input LogInput {
+  email: String!
+  password: String!
 }

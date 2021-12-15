@@ -1,78 +1,47 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
-import { RegistrationInput } from '../auth/dto/registration.input';
-import { User } from './entities/user.entity';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import * as bcrypt from 'bcrypt';
+import { Account } from '../auth/entities/auth.entity';
+import { User } from './entities/user.entity';
+import { CreateUserInput } from './dto/create-user.input';
+import { UpdateUserInput } from './dto/update-user.input';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
+    @InjectRepository(User) private userRepo: Repository<User>,
+    @InjectRepository(Account) private accountRepo: Repository<Account>,
   ) {}
-  async create(data: RegistrationInput): Promise<User> {
-    const newUser = await this.userRepository.create({
-      ...data,
-      creationDate: new Date(),
-    });
-    await this.userRepository.save(newUser);
-    return newUser;
+
+  findUser(userId: string) {
+    return this.accountRepo.findOne(userId);
   }
 
-  async getById(id: number): Promise<User> {
-    const user = await this.userRepository.findOne({ id });
-    if (user) {
-      return user;
-    }
-    throw new BadRequestException('User with this id does not exist');
+  list() {
+    return this.userRepo.find({ order: { createdAt: 'ASC' } });
   }
 
-  async getByEmail(email: string): Promise<User> {
-    const user = await this.userRepository.findOne({ email });
-    if (user) {
-      return user;
-    }
-    throw new BadRequestException('User with this email does not exist');
+  async findById(id: string) {
+    let existedUser = await this.userRepo.findOne(id);
+    if (!existedUser) throw new NotFoundException('user profile not found');
+    return existedUser;
   }
 
-  async getAllUsers(): Promise<User[]> {
-    const users = await this.userRepository.find();
-    return users;
+  create(createUserInput: CreateUserInput) {
+    let newUser = this.userRepo.create(createUserInput);
+    return this.userRepo.save(newUser);
   }
 
-  async remove(id: number): Promise<boolean> {
-    const user = await this.userRepository.findOne({ id });
-    if (!user) {
-      throw new BadRequestException('User with this id does not exist');
-    }
-    await this.userRepository.delete({ id });
-    return true;
+  async update(id: string, updateUserInput: UpdateUserInput) {
+    let existedUser = await this.findById(id);
+    let UserToUpdate = this.userRepo.merge(existedUser, updateUserInput);
+    return this.userRepo.save(UserToUpdate);
   }
 
-  async setCurrentRefreshToken(refreshToken: string, userId: number) {
-    const currentHashedRefreshToken = await bcrypt.hash(refreshToken, 10);
-    await this.userRepository.update(userId, {
-      currentHashedRefreshToken,
-    });
-  }
-
-  async getUserIfRefreshTokenMatches(refreshToken: string, userId: number) {
-    const user = await this.getById(userId);
-
-    const isRefreshTokenMatching = await bcrypt.compare(
-      refreshToken,
-      user.currentHashedRefreshToken,
-    );
-
-    if (isRefreshTokenMatching) {
-      return user;
-    }
-  }
-
-  async removeRefreshToken(userId: number) {
-    return this.userRepository.update(userId, {
-      currentHashedRefreshToken: null,
-    });
+  async remove(id: string) {
+    let existedUser = await this.findById(id);
+    await this.userRepo.remove(existedUser);
+    existedUser.id = id;
+    return existedUser;
   }
 }
