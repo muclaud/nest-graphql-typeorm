@@ -1,13 +1,14 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import { Resolver, Context, Query, Mutation, Args } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
 import { User } from '../users/entities/user.entity';
 import { RegistrationInput } from './dto/registration.input';
+import { LogInput } from './dto/login.input';
 import { UseGuards, Req } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import LocalAuthGuard from './guards/localAuth.guard';
 import RequestWithUser from './common/requestWithUser.interface';
-import JwtAuthGuard from './guards/jwtAuth.guard';
 import JwtRefreshGuard from './guards/jwt-refresh.guard';
+import { GqlAuthGuard } from './guards/graphql-jwt-auth.guard';
 
 @Resolver(() => User)
 export class AuthResolver {
@@ -17,9 +18,12 @@ export class AuthResolver {
   ) {}
 
   @Mutation((returns) => User)
-  @UseGuards(LocalAuthGuard)
-  async login(@Req() request: RequestWithUser) {
-    const { user } = request;
+  @UseGuards(GqlAuthGuard)
+  async login(
+    @Args('loginInput') LoginInput: LogInput,
+    @Context() context: { request: RequestWithUser },
+  ) {
+    const user = await this.authService.getAuthenticatedUser(LoginInput);
     const accessTokenCookie = this.authService.getCookieWithJwtAccessToken(
       user.id,
     );
@@ -28,7 +32,7 @@ export class AuthResolver {
 
     await this.usersService.setCurrentRefreshToken(refreshToken, user.id);
 
-    request.res.setHeader('Set-Cookie', [
+    context.request.res.setHeader('Set-Cookie', [
       accessTokenCookie,
       refreshTokenCookie,
     ]);
@@ -38,9 +42,13 @@ export class AuthResolver {
 
   @Mutation((returns) => Boolean)
   @UseGuards(LocalAuthGuard)
-  async logout(@Req() request: RequestWithUser) {
-    await this.usersService.removeRefreshToken(request.user.id);
-    request.res.setHeader('Set-Cookie', this.authService.getCookieForLogOut());
+  @UseGuards(GqlAuthGuard)
+  async logout(@Context() context: { request: RequestWithUser }) {
+    await this.usersService.removeRefreshToken(context.request.user.id);
+    context.request.res.setHeader(
+      'Set-Cookie',
+      this.authService.getCookieForLogOut(),
+    );
   }
 
   @Mutation((returns) => User)
@@ -49,19 +57,20 @@ export class AuthResolver {
   }
 
   @Query((returns) => User)
-  @UseGuards(JwtAuthGuard)
-  authenticate(@Req() request: RequestWithUser) {
-    return request.user;
+  @UseGuards(GqlAuthGuard)
+  authenticate(@Context() context: { request: RequestWithUser }) {
+    return context.request.user;
   }
 
   @Query((returns) => User)
+  @UseGuards(GqlAuthGuard)
   @UseGuards(JwtRefreshGuard)
-  refresh(@Req() request: RequestWithUser) {
+  refresh(@Context() context: { request: RequestWithUser }) {
     const accessTokenCookie = this.authService.getCookieWithJwtAccessToken(
-      request.user.id,
+      context.request.user.id,
     );
 
-    request.res.setHeader('Set-Cookie', accessTokenCookie);
-    return request.user;
+    context.request.res.setHeader('Set-Cookie', accessTokenCookie);
+    return context.request.user;
   }
 }

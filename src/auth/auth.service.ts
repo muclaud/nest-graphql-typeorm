@@ -6,6 +6,7 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { TokenPayload } from './common/tokenPayload.interface';
+import { LogInput } from './dto/login.input';
 
 @Injectable()
 export class AuthService {
@@ -32,13 +33,25 @@ export class AuthService {
     }
   }
 
-  public async getAuthenticatedUser(email: string, plainTextPassword: string) {
+  public async getAuthenticatedUser(LogInput: LogInput): Promise<User> {
     try {
-      const user = await this.usersService.getByEmail(email);
-      await this.verifyPassword(plainTextPassword, user.password);
-      // user.password = undefined;
+      const user = await this.usersService.getByEmail(LogInput.email);
+      await this.verifyPassword(LogInput.plainTextPassword, user.password);
       return user;
     } catch (error) {
+      throw new BadRequestException('Wrong credentials provided');
+    }
+  }
+
+  private async verifyPassword(
+    plainTextPassword: string,
+    hashedPassword: string,
+  ) {
+    const isPasswordMatching = await bcrypt.compare(
+      plainTextPassword,
+      hashedPassword,
+    );
+    if (!isPasswordMatching) {
       throw new BadRequestException('Wrong credentials provided');
     }
   }
@@ -78,19 +91,6 @@ export class AuthService {
       cookie,
       token,
     };
-  }
-
-  private async verifyPassword(
-    plainTextPassword: string,
-    hashedPassword: string,
-  ) {
-    const isPasswordMatching = await bcrypt.compare(
-      plainTextPassword,
-      hashedPassword,
-    );
-    if (!isPasswordMatching) {
-      throw new BadRequestException('Wrong credentials provided');
-    }
   }
 
   public async getUserFromAuthenticationToken(token: string) {
