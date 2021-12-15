@@ -25,7 +25,7 @@ export class AuthResolver {
   constructor(private readonly authService: AuthService) {}
 
   @ResolveField(() => User)
-  user(@Parent() account: Account) {
+  account(@Parent() account: Account) {
     return this.authService.findUser(account.id);
   }
 

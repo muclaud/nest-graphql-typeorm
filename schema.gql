@@ -25,6 +25,23 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type Post {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  createdBy: String!
+  updatedBy: String
+  isDeleted: Boolean!
+  title: String!
+  description: String!
+  paragraphs: [String!]!
+  categories: [String!]
+  keywords: [String!]
+  private: Boolean!
+  accountId: String
+  account: Account
+}
+
 type Account {
   id: ID!
   createdAt: DateTime!
@@ -36,14 +53,18 @@ type Account {
   role: String!
   status: String!
   user: User
+  posts: [Post!]
   password: String!
   verificationCode: String
+  account: User!
 }
 
 type Query {
   users: [User!]!
-  account(id: ID!): User!
+  user(id: ID!): User!
   currentAccount: Account!
+  posts: [Post!]!
+  post(id: ID!): Post!
 }
 
 type Mutation {
@@ -56,6 +77,9 @@ type Mutation {
   refresh: Account!
   signout: String!
   removeAccount(id: ID!): Account!
+  createPost(createPostInput: CreatePostInput!): Post!
+  updatePost(updatePostInput: UpdatePostInput!): Post!
+  removePost(id: ID!): Post!
 }
 
 input CreateUserInput {
@@ -95,4 +119,23 @@ input ActivateInput {
 input LogInput {
   email: String!
   password: String!
+}
+
+input CreatePostInput {
+  title: String!
+  description: String!
+  paragraphs: [String!]!
+  categories: [String!]
+  keywords: [String!]
+  private: Boolean = false
+}
+
+input UpdatePostInput {
+  title: String
+  description: String
+  paragraphs: [String!]
+  categories: [String!]
+  keywords: [String!]
+  private: Boolean = false
+  id: ID!
 }

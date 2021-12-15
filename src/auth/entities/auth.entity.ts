@@ -1,10 +1,11 @@
-import { Column, Entity, OneToOne } from 'typeorm';
+import { Column, Entity, OneToMany, OneToOne } from 'typeorm';
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import { UserRole, AccountStatus } from '../../common/types';
 
 import { EntityBase } from '../../common/entities/entityBase';
 import { User } from '../../users/entities/user.entity';
+import { Post } from '../../posts/entities/post.entity';
 
 @ObjectType()
 @Entity('Accounts')
@@ -49,4 +50,10 @@ export class Account extends EntityBase {
     cascade: ['insert', 'update', 'remove'],
   })
   user: User;
+
+  @Field(() => [Post], { nullable: true })
+  @OneToMany(() => Post, (post) => post.account, {
+    cascade: ['insert', 'update'],
+  })
+  posts: Post[];
 }

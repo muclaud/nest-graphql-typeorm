@@ -1,4 +1,5 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql';
+import { ParseUUIDPipe } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { Post } from './entities/post.entity';
 import { CreatePostInput } from './dto/create-post.input';
@@ -6,30 +7,30 @@ import { UpdatePostInput } from './dto/update-post.input';
 
 @Resolver(() => Post)
 export class PostsResolver {
-  constructor(private readonly postsService: PostsService) {}
-
-  @Mutation(() => Post)
-  createPost(@Args('createPostInput') createPostInput: CreatePostInput) {
-    return this.postsService.create(createPostInput);
-  }
+  constructor(private readonly postService: PostsService) {}
 
   @Query(() => [Post], { name: 'posts' })
-  findAll() {
-    return this.postsService.findAll();
+  list() {
+    return this.postService.list();
   }
 
   @Query(() => Post, { name: 'post' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.postsService.findOne(id);
+  findById(@Args('id', { type: () => ID }) id: string) {
+    return this.postService.findById(id);
+  }
+
+  @Mutation(() => Post)
+  createPost(@Args('createPostInput') createPostInput: CreatePostInput) {
+    return this.postService.create(createPostInput);
   }
 
   @Mutation(() => Post)
   updatePost(@Args('updatePostInput') updatePostInput: UpdatePostInput) {
-    return this.postsService.update(updatePostInput.id, updatePostInput);
+    return this.postService.update(updatePostInput.id, updatePostInput);
   }
 
   @Mutation(() => Post)
-  removePost(@Args('id', { type: () => Int }) id: number) {
-    return this.postsService.remove(id);
+  removePost(@Args('id', { type: () => ID }, ParseUUIDPipe) id: string) {
+    return this.postService.remove(id);
   }
 }
