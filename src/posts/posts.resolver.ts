@@ -33,4 +33,9 @@ export class PostsResolver {
   removePost(@Args('id', { type: () => ID }, ParseUUIDPipe) id: string) {
     return this.postService.remove(id);
   }
+
+  @Mutation(() => Post)
+  restorePost(@Args('id', { type: () => ID }, ParseUUIDPipe) id: string) {
+    return this.postService.restore(id);
+  }
 }

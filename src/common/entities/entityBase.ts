@@ -3,6 +3,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   CreateDateColumn,
+  DeleteDateColumn,
   Column,
 } from 'typeorm';
 
@@ -43,4 +44,8 @@ export abstract class EntityBase extends BaseEntity {
   @Field(() => Boolean)
   @Column({ name: 'is_deleted', type: 'boolean', default: false })
   isDeleted: boolean;
+
+  @Field(() => Date, { nullable: true })
+  @DeleteDateColumn({ name: 'deleted_at', nullable: true })
+  deletedAt: Date;
 }

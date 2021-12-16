@@ -9,6 +9,7 @@ type User {
   createdBy: String!
   updatedBy: String
   isDeleted: Boolean!
+  deletedAt: DateTime
   firstName: String!
   lastName: String!
   birthDate: String!
@@ -32,6 +33,7 @@ type Post {
   createdBy: String!
   updatedBy: String
   isDeleted: Boolean!
+  deletedAt: DateTime
   title: String!
   description: String!
   paragraphs: [String!]!
@@ -49,6 +51,7 @@ type Account {
   createdBy: String!
   updatedBy: String
   isDeleted: Boolean!
+  deletedAt: DateTime
   email: String!
   role: String!
   status: String!
@@ -80,6 +83,7 @@ type Mutation {
   createPost(createPostInput: CreatePostInput!): Post!
   updatePost(updatePostInput: UpdatePostInput!): Post!
   removePost(id: ID!): Post!
+  restorePost(id: ID!): Post!
 }
 
 input CreateUserInput {

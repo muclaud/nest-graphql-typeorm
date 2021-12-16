@@ -31,9 +31,21 @@ export class PostsService {
   }
 
   async remove(id: string) {
-    let existedPost = await this.findById(id);
-    await this.postRepo.remove(existedPost);
-    existedPost.id = id;
+    let existedPost = await this.postRepo.softDelete(id);
+    if (!existedPost.affected) throw new NotFoundException('post not found');
     return existedPost;
   }
+
+  async restore(id: string) {
+    let existedPost = await this.postRepo.restore(id);
+    if (!existedPost.affected) throw new NotFoundException('post not found');
+    return existedPost;
+  }
+
+  // async remove(id: string) {
+  //   let existedPost = await this.findById(id);
+  //   await this.postRepo.remove(existedPost);
+  //   existedPost.id = id;
+  //   return existedPost;
+  // }
 }
