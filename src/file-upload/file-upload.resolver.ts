@@ -6,7 +6,7 @@ import { File } from './entities/file-upload.entity';
 export class FileUploadResolver {
   constructor(private readonly fileUploadService: FileUploadService) {}
 
-  @Query(() => File, { name: 'image' })
+  @Query(() => File, { name: 'getImageById' })
   findById(@Args('id', { type: () => ID }) id: string) {
     return this.fileUploadService.findById(id);
   }

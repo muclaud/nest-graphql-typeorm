@@ -39,9 +39,14 @@ export class UsersService {
   }
 
   async remove(id: string) {
-    let existedUser = await this.findById(id);
-    await this.userRepo.remove(existedUser);
-    existedUser.id = id;
+    let existedUser = await this.userRepo.softDelete(id);
+    if (!existedUser.affected) throw new NotFoundException('user not found');
+    return existedUser;
+  }
+
+  async restore(id: string) {
+    let existedUser = await this.userRepo.restore(id);
+    if (!existedUser.affected) throw new NotFoundException('user not found');
     return existedUser;
   }
 }
