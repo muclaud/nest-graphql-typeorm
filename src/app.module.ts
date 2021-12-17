@@ -9,6 +9,7 @@ import { PostsModule } from './posts/posts.module';
 import { UsersModule } from './users/users.module';
 import { MailModule } from './email/mailer.module';
 import { FileUploadModule } from './file-upload/file-upload.module';
+import { ChatModule } from './chat/chat.module';
 import * as Joi from 'joi';
 
 @Module({
@@ -44,6 +45,7 @@ import * as Joi from 'joi';
     AuthModule,
     PostsModule,
     FileUploadModule,
+    ChatModule,
   ],
   controllers: [],
   providers: [Upload],

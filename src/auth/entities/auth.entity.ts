@@ -1,11 +1,11 @@
 import { Column, Entity, OneToMany, OneToOne } from 'typeorm';
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { UserRole, AccountStatus } from '../../common/types';
+import { UserRole, AccountStatus } from 'src/common/types';
 
-import { EntityBase } from '../../common/entities/entityBase';
-import { User } from '../../users/entities/user.entity';
-import { Post } from '../../posts/entities/post.entity';
+import { EntityBase } from 'src/common/entities/entityBase';
+import { User } from 'src/users/entities/user.entity';
+import { Post } from 'src/posts/entities/post.entity';
 
 @ObjectType()
 @Entity('Accounts')

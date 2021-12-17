@@ -3,7 +3,7 @@ import { ParseUUIDPipe } from '@nestjs/common';
 import { GraphQLUpload, FileUpload } from 'graphql-upload';
 import { PostsService } from './posts.service';
 import { Post } from './entities/post.entity';
-import { File } from '../file-upload/entities/file-upload.entity';
+import { File } from 'src/file-upload/entities/file-upload.entity';
 import { CreatePostInput } from './dto/create-post.input';
 import { UpdatePostInput } from './dto/update-post.input';
 

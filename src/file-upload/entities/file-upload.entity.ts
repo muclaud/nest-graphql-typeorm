@@ -1,7 +1,7 @@
 import { Column, Entity } from 'typeorm';
 import { ObjectType, Field } from '@nestjs/graphql';
 
-import { EntityBase } from '../../common/entities/entityBase';
+import { EntityBase } from 'src/common/entities/entityBase';
 
 @ObjectType()
 @Entity('Files')

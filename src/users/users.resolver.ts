@@ -9,7 +9,7 @@ import {
 } from '@nestjs/graphql';
 import { ParseUUIDPipe } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { Account } from '../auth/entities/auth.entity';
+import { Account } from 'src/auth/entities/auth.entity';
 import { User } from './entities/user.entity';
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';

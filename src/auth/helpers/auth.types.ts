@@ -1,6 +1,6 @@
 import { Request } from 'express';
 
-import { UserRole } from '../../common/types';
+import { UserRole } from 'src/common/types';
 import { Account } from '../entities/auth.entity';
 
 export const getAccessTokenExpiresDate = () => {
