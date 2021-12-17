@@ -47,4 +47,9 @@ export class UsersResolver {
   removeUser(@Args('id', { type: () => ID }, ParseUUIDPipe) id: string) {
     return this.userService.remove(id);
   }
+
+  @Mutation(() => User, { name: 'restorePost' })
+  restoreUser(@Args('id', { type: () => ID }, ParseUUIDPipe) id: string) {
+    return this.userService.restore(id);
+  }
 }

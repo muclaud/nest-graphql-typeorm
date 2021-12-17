@@ -89,6 +89,7 @@ type Mutation {
   createUser(createUserInput: CreateUserInput!): User!
   updateUser(updateUserInput: UpdateUserInput!): User!
   removeUser(id: ID!): User!
+  restorePost(id: ID!): Post!
   signup(registrationInput: RegistrationInput!): String!
   activateAccount(activateInput: ActivateInput!): Account!
   signin(loginInput: LogInput!): Account!
@@ -98,7 +99,6 @@ type Mutation {
   createNewPost(createPostInput: CreatePostInput!): Post!
   updatePostById(updatePostInput: UpdatePostInput!): Post!
   removePost(id: ID!): Post!
-  restorePost(id: ID!): Post!
   uploadImageToPost(postId: String!, file: Upload!): File!
 }
 
