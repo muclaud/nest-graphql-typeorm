@@ -23,27 +23,27 @@ export class UsersResolver {
     return this.userService.findUser(user.accountId);
   }
 
-  @Query(() => [User], { name: 'users' })
+  @Query(() => [User], { name: 'getAllUsers' })
   list() {
     return this.userService.list();
   }
 
-  @Query(() => User, { name: 'user' })
+  @Query(() => User, { name: 'getUserById' })
   findById(@Args('id', { type: () => ID }) id: string) {
     return this.userService.findById(id);
   }
 
-  @Mutation(() => User)
+  @Mutation(() => User, { name: 'createUser' })
   createUser(@Args('createUserInput') createUserInput: CreateUserInput) {
     return this.userService.create(createUserInput);
   }
 
-  @Mutation(() => User)
+  @Mutation(() => User, { name: 'updateUser' })
   updateUser(@Args('updateUserInput') updateUserInput: UpdateUserInput) {
     return this.userService.update(updateUserInput.id, updateUserInput);
   }
 
-  @Mutation(() => User)
+  @Mutation(() => User, { name: 'removeUser' })
   removeUser(@Args('id', { type: () => ID }, ParseUUIDPipe) id: string) {
     return this.userService.remove(id);
   }

@@ -77,29 +77,29 @@ type Account {
 }
 
 type Query {
-  users: [User!]!
-  user(id: ID!): User!
+  getAllUsers: [User!]!
+  getUserById(id: ID!): User!
   currentAccount: Account!
-  posts: [Post!]!
-  post(id: ID!): Post!
-  image(id: ID!): File!
+  getAllPosts: [Post!]!
+  getPostById(id: ID!): Post!
+  getImageById(id: ID!): File!
 }
 
 type Mutation {
   createUser(createUserInput: CreateUserInput!): User!
   updateUser(updateUserInput: UpdateUserInput!): User!
   removeUser(id: ID!): User!
-  registration(registrationInput: RegistrationInput!): String!
-  activate(activateInput: ActivateInput!): Account!
-  login(loginInput: LogInput!): Account!
-  refresh: Account!
+  signup(registrationInput: RegistrationInput!): String!
+  activateAccount(activateInput: ActivateInput!): Account!
+  signin(loginInput: LogInput!): Account!
+  refreshAccount: Account!
   signout: String!
   removeAccount(id: ID!): Account!
-  createPost(createPostInput: CreatePostInput!): Post!
-  updatePost(updatePostInput: UpdatePostInput!): Post!
+  createNewPost(createPostInput: CreatePostInput!): Post!
+  updatePostById(updatePostInput: UpdatePostInput!): Post!
   removePost(id: ID!): Post!
   restorePost(id: ID!): Post!
-  uploadFile(postId: String!, file: Upload!): File!
+  uploadImageToPost(postId: String!, file: Upload!): File!
 }
 
 input CreateUserInput {

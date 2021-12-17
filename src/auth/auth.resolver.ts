@@ -30,24 +30,25 @@ export class AuthResolver {
   }
 
   @Mutation(() => String)
-  registration(
-    @Args('registrationInput') registrationInput: RegistrationInput,
-  ) {
+  signup(@Args('registrationInput') registrationInput: RegistrationInput) {
     return this.authService.signup(registrationInput);
   }
 
   @Mutation(() => Account)
-  activate(@Args('activateInput') input: ActivateInput, @Context() { res }) {
+  activateAccount(
+    @Args('activateInput') input: ActivateInput,
+    @Context() { res },
+  ) {
     return this.authService.activate(input, res);
   }
 
   @Mutation(() => Account)
-  login(@Args('loginInput') logInput: LogInput, @Context() { res }) {
+  signin(@Args('loginInput') logInput: LogInput, @Context() { res }) {
     return this.authService.signin(logInput, res);
   }
 
   @Mutation(() => Account)
-  refresh(@Context() { req, res }) {
+  refreshAccount(@Context() { req, res }) {
     return this.authService.refresh(req, res);
   }
 
