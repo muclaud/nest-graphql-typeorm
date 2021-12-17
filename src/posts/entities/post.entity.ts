@@ -1,8 +1,9 @@
-import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, ManyToOne, OneToOne, JoinColumn } from 'typeorm';
 import { ObjectType, Field } from '@nestjs/graphql';
 
 import { EntityBase } from '../../common/entities/entityBase';
 import { Account } from '../../auth/entities/auth.entity';
+import { File } from '../../file-upload/entities/file-upload.entity';
 
 @ObjectType()
 @Entity('Posts')
@@ -39,4 +40,13 @@ export class Post extends EntityBase {
   @ManyToOne(() => Account, (account) => account.user)
   @JoinColumn({ name: 'account_id' })
   account: Account;
+
+  @Field(() => File, { nullable: true })
+  @OneToOne(() => File, (file) => file.id)
+  @JoinColumn({ name: 'image_id' })
+  image: File;
+
+  @Field(() => String, { nullable: true })
+  @Column({ nullable: true })
+  public imageId?: string;
 }
