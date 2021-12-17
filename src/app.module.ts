@@ -1,15 +1,13 @@
 import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
-// import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { MailerModule } from '@nestjs-modules/mailer';
+import { ConfigModule } from '@nestjs/config';
 import { graphqlUploadExpress } from 'graphql-upload';
 import { DatabaseModule } from './database/database.module';
 import { AuthModule } from './auth/auth.module';
 import { Upload } from './common/scalars/upload.scalar';
 import { PostsModule } from './posts/posts.module';
 import { UsersModule } from './users/users.module';
-import { mailerConfigFactory } from './email/mailerConfigFactory';
+import { MailModule } from './email/mailer.module';
 import { FileUploadModule } from './file-upload/file-upload.module';
 import * as Joi from 'joi';
 
@@ -40,11 +38,7 @@ import * as Joi from 'joi';
       },
       playground: true,
     }),
-    MailerModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: mailerConfigFactory,
-      inject: [ConfigService],
-    }),
+    MailModule,
     UsersModule,
     DatabaseModule,
     AuthModule,
@@ -54,7 +48,6 @@ import * as Joi from 'joi';
   controllers: [],
   providers: [Upload],
 })
-// export class AppModule {}
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(graphqlUploadExpress()).forRoutes('graphql');
