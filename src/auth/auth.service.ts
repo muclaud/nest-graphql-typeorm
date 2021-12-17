@@ -5,17 +5,13 @@ import {
   UnauthorizedException,
   NotFoundException,
 } from '@nestjs/common';
-
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-
 import { JwtService } from '@nestjs/jwt';
 import { MailerService } from '@nestjs-modules/mailer';
-
 import { Request, Response } from 'express';
 import * as bcrypt from 'bcrypt';
 import { nanoid } from 'nanoid';
-
 import {
   ApiRequest,
   ACCESS_TOKEN,
@@ -25,12 +21,9 @@ import {
   getAccessTokenExpiresDate,
   getRefreshTokenExpiresDate,
 } from './helpers/auth.types';
-
-import { AccountStatus } from '../common/types';
-
+import { AccountStatus } from 'src/common/types';
 import { Account } from './entities/auth.entity';
-import { User } from '../users/entities/user.entity';
-
+import { User } from 'src/users/entities/user.entity';
 import { RegistrationInput } from './dto/registration.input';
 import { ActivateInput } from './dto/activate.input';
 import { LogInput } from './dto/login.input';

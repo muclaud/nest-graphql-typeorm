@@ -1,9 +1,9 @@
 import { Entity, Column, ManyToOne, OneToOne, JoinColumn } from 'typeorm';
 import { ObjectType, Field } from '@nestjs/graphql';
 
-import { EntityBase } from '../../common/entities/entityBase';
-import { Account } from '../../auth/entities/auth.entity';
-import { File } from '../../file-upload/entities/file-upload.entity';
+import { EntityBase } from 'src/common/entities/entityBase';
+import { Account } from 'src/auth/entities/auth.entity';
+import { File } from 'src/file-upload/entities/file-upload.entity';
 
 @ObjectType()
 @Entity('Posts')

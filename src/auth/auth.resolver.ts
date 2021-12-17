@@ -12,10 +12,8 @@ import { ParseUUIDPipe } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Authorize } from './guards/auth.guard';
 import { CurrentAccount } from './helpers/current-account.decorator';
-
 import { Account } from './entities/auth.entity';
 import { User } from '../users/entities/user.entity';
-
 import { RegistrationInput } from './dto/registration.input';
 import { ActivateInput } from './dto/activate.input';
 import { LogInput } from './dto/login.input';

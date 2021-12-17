@@ -1,8 +1,8 @@
 import { Entity, Column, OneToOne, JoinColumn } from 'typeorm';
 import { ObjectType, Field } from '@nestjs/graphql';
 
-import { EntityBase } from '../../common/entities/entityBase';
-import { Account } from '../../auth/entities/auth.entity';
+import { EntityBase } from 'src/common/entities/entityBase';
+import { Account } from 'src/auth/entities/auth.entity';
 
 @ObjectType()
 @Entity('Users')
