@@ -1,7 +1,9 @@
 import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql';
 import { ParseUUIDPipe } from '@nestjs/common';
+import { GraphQLUpload, FileUpload } from 'graphql-upload';
 import { PostsService } from './posts.service';
 import { Post } from './entities/post.entity';
+import { File } from '../file-upload/entities/file-upload.entity';
 import { CreatePostInput } from './dto/create-post.input';
 import { UpdatePostInput } from './dto/update-post.input';
 
@@ -37,5 +39,28 @@ export class PostsResolver {
   @Mutation(() => Post)
   restorePost(@Args('id', { type: () => ID }, ParseUUIDPipe) id: string) {
     return this.postService.restore(id);
+  }
+
+  @Mutation(() => File)
+  async uploadFile(
+    @Args('file', { type: () => GraphQLUpload }) file: FileUpload,
+    @Args('postId') postId: string,
+  ): Promise<File> {
+    const { createReadStream, filename } = await file;
+    const stream = createReadStream();
+    const chunks = [];
+    let buffer = await new Promise<Buffer>((resolve, reject) => {
+      let buffer: Buffer;
+      stream.on('data', function (chunk) {
+        chunks.push(chunk);
+      });
+      stream.on('end', function () {
+        buffer = Buffer.concat(chunks);
+        resolve(buffer);
+      });
+      stream.on('error', reject);
+    });
+    buffer = Buffer.concat(chunks);
+    return this.postService.addImage(postId, buffer, filename);
   }
 }

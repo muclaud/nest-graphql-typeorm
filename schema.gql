@@ -26,6 +26,18 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type File {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  createdBy: String!
+  updatedBy: String
+  isDeleted: Boolean!
+  deletedAt: DateTime
+  filename: String!
+  data: String!
+}
+
 type Post {
   id: ID!
   createdAt: DateTime!
@@ -42,6 +54,8 @@ type Post {
   private: Boolean!
   accountId: String
   account: Account
+  image: File
+  imageId: String
 }
 
 type Account {
@@ -68,6 +82,7 @@ type Query {
   currentAccount: Account!
   posts: [Post!]!
   post(id: ID!): Post!
+  image(id: ID!): File!
 }
 
 type Mutation {
@@ -84,6 +99,7 @@ type Mutation {
   updatePost(updatePostInput: UpdatePostInput!): Post!
   removePost(id: ID!): Post!
   restorePost(id: ID!): Post!
+  uploadFile(postId: String!, file: Upload!): File!
 }
 
 input CreateUserInput {
@@ -143,3 +159,6 @@ input UpdatePostInput {
   private: Boolean = false
   id: ID!
 }
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
